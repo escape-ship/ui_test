@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>카카오 로그인 콜백</title>
+</head>
+<body>
+    <h2>카카오 로그인 완료</h2>
+    <p>카카오 로그인 처리가 완료되었습니다.</p>
+    <p id="code"></p> <!-- 인가 코드 표시 -->
+    <p id="user-info"></p> <!-- 사용자 정보 표시 -->
+
+    <script>
+        // URL에서 code 값 추출
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get("code");
+
+        if (code) {
+            document.getElementById("code").innerText = "인가 코드: " + code;
+            console.log("인가 코드:", code);
+
+            // Go 서버로 인가 코드 전송
+            fetch("http://localhost:8081/oauth/kakao/callback", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    code: code,
+                    scope: "account_email profile_image" // 동의 항목 예시 (이메일, 프로필 이미지)
+                }) // 인가 코드와 함께 동의 항목 전송
+            })
+            .then(response => response.json())  // 응답을 JSON으로 변환
+            .then(data => {
+                console.log("서버에서 받은 데이터:", data); // 받은 데이터 출력
+
+                // 응답 데이터가 정상적으로 오면 사용자 정보 표시
+                if (data && data.userInfoJson) {
+                    document.getElementById("user-info").innerText = `
+                        액세스 토큰: ${data.accessToken}
+                        리프레시 토큰: ${data.refreshToken}
+                        사용자 이메일: ${data.userInfoJson}
+                    `;
+                    
+                    // 로컬 스토리지에 데이터 저장
+                    localStorage.setItem("accessToken", data.accessToken);
+                    localStorage.setItem("refreshToken", data.refreshToken);
+                    localStorage.setItem("userInfoJson", data.userInfoJson);
+
+                    // 로그인 성공 후 상품 페이지로 이동
+                    window.location.href = "product.html"; // 상품 페이지로 리디렉션
+                } else {
+                    document.getElementById("user-info").innerText = "사용자 정보가 없습니다.";
+                }
+            })
+            .catch(error => {
+                console.error("오류 발생:", error);  // 더 구체적인 오류 로그 출력
+                document.getElementById("user-info").innerText = "사용자 정보를 불러오는 데 오류가 발생했습니다.";
+            });
+        } else {
+            document.getElementById("code").innerText = "인가 코드가 없습니다.";
+        }
+    </script>
+</body>
+</html>
