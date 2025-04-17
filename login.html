@@ -71,7 +71,9 @@
                 return res.json();
             })
             .then(data => {
+                console.log(data);
                 localStorage.setItem("userEmail", email);
+                localStorage.setItem("accessToken", data.accessToken);
                 window.location.href = "product.html";
             })
             .catch(err => {
