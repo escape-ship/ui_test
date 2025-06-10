@@ -1,5 +1,5 @@
-import { NavigationMenu, NavigationMenuItem } from "@/components/ui/navigation-menu"
-import { Button } from "@/components/ui/button"
+import { NavigationMenu, NavigationMenuItem } from "../ui/navigation-menu"
+import { Button } from "../ui/button"
 import { ShoppingCart, Search, User } from "lucide-react"
 import { Link } from "react-router-dom"
 import MobileDrawer from "./MobileDrawer"

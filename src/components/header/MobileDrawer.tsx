@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { Menu } from "lucide-react"
 import { Link } from "react-router-dom"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet"
 
 export default function MobileDrawer({ className = "" }: { className?: string }) {
   const [open, setOpen] = useState(false)
