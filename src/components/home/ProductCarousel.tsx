@@ -8,12 +8,12 @@ const items = [
 
 export default function ProductCarousel() {
   return (
-    <section className="py-12">
+    <section className="py-16">
       <Carousel>
         <CarouselContent>
           {items.map((src, idx) => (
             <CarouselItem key={idx} className="basis-full">
-              <img src={src} className="w-full h-64 object-cover rounded-lg" />
+              <img src={src} className="h-72 w-full rounded-lg object-cover" />
             </CarouselItem>
           ))}
         </CarouselContent>

@@ -7,11 +7,15 @@ const categories = [
 
 export default function CategoryGrid() {
   return (
-    <section className="grid grid-cols-2 md:grid-cols-4 gap-4 py-12">
+    <section className="grid grid-cols-2 gap-6 py-16 md:grid-cols-4">
       {categories.map(cat => (
-        <div key={cat.title} className="text-center">
-          <img src={cat.img} alt={cat.title} className="rounded-lg mb-2 h-32 w-full object-cover" />
-          <h3 className="font-semibold">{cat.title}</h3>
+        <div key={cat.title} className="text-center space-y-2">
+          <img
+            src={cat.img}
+            alt={cat.title}
+            className="h-40 w-full rounded-lg object-cover"
+          />
+          <h3 className="text-lg font-medium text-primary">{cat.title}</h3>
         </div>
       ))}
     </section>
