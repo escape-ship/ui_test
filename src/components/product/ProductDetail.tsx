@@ -24,11 +24,24 @@ export default function ProductDetail() {
   return (
     <div className="flex flex-col md:flex-row gap-6">
       <div className="md:w-1/2">
-        <img src={selected} alt="Product" className="rounded-lg w-full" />
+        <img
+          src={selected}
+          srcSet={`${selected} 1x, ${selected.replace('w=800', 'w=1600')} 2x`}
+          sizes="(min-width: 768px) 50vw, 100vw"
+          loading="lazy"
+          alt="Product"
+          className="rounded-lg w-full object-cover"
+        />
         <div className="flex gap-2 mt-4">
           {images.map(img => (
-            <button key={img} onClick={() => setSelected(img)} className={`border rounded-md overflow-hidden ${selected === img ? 'border-ring' : ''}`}> 
-              <img src={img} className="h-16 w-16 object-cover" />
+            <button key={img} onClick={() => setSelected(img)} className={`border rounded-md overflow-hidden ${selected === img ? 'border-ring' : ''}`}>
+              <img
+                src={img}
+                srcSet={`${img} 1x, ${img.replace('w=800', 'w=1600')} 2x`}
+                sizes="64px"
+                loading="lazy"
+                className="h-16 w-16 object-cover"
+              />
             </button>
           ))}
         </div>

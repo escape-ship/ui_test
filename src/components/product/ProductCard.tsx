@@ -13,6 +13,9 @@ export default function ProductCard({ product }: { product: Product }) {
     <div className="border rounded-lg p-4 text-center flex flex-col gap-2">
       <img
         src={product.img}
+        srcSet={`${product.img} 1x, ${product.img.replace('w=800', 'w=1600')} 2x`}
+        sizes="(min-width: 768px) 25vw, 50vw"
+        loading="lazy"
         alt={product.name}
         className="h-40 w-full object-cover rounded"
       />

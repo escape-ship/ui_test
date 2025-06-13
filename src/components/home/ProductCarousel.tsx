@@ -13,7 +13,13 @@ export default function ProductCarousel() {
         <CarouselContent>
           {items.map((src, idx) => (
             <CarouselItem key={idx} className="basis-full">
-              <img src={src} className="w-full h-64 object-cover rounded-lg" />
+              <img
+                src={src}
+                srcSet={`${src} 1x, ${src.replace('w=800', 'w=1600')} 2x`}
+                sizes="(min-width: 768px) 768px, 100vw"
+                loading="lazy"
+                className="w-full h-64 object-cover rounded-lg"
+              />
             </CarouselItem>
           ))}
         </CarouselContent>

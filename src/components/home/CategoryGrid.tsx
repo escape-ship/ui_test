@@ -10,7 +10,14 @@ export default function CategoryGrid() {
     <section className="grid grid-cols-2 md:grid-cols-4 gap-4 py-12">
       {categories.map(cat => (
         <div key={cat.title} className="text-center">
-          <img src={cat.img} alt={cat.title} className="rounded-lg mb-2 h-32 w-full object-cover" />
+          <img
+            src={cat.img}
+            srcSet={`${cat.img} 1x, ${cat.img.replace('w=400', 'w=800')} 2x`}
+            sizes="(min-width: 768px) 200px, 50vw"
+            loading="lazy"
+            alt={cat.title}
+            className="rounded-lg mb-2 h-32 w-full object-cover"
+          />
           <h3 className="font-semibold">{cat.title}</h3>
         </div>
       ))}
