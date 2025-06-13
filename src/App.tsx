@@ -9,6 +9,8 @@ import CustomOrderPage from "@/pages/custom-order";
 import AboutPage from "@/pages/about";
 import FAQPage from "@/pages/faq";
 import ContactPage from "@/pages/contact";
+import LoginPage from "@/pages/login";
+import RegisterPage from "@/pages/register";
 import "./index.css";
 
 export function App() {
@@ -25,6 +27,8 @@ export function App() {
           <Route path="/about" element={<AboutPage />} />
           <Route path="/faq" element={<FAQPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
         </Routes>
       </PageWrapper>
     </BrowserRouter>
