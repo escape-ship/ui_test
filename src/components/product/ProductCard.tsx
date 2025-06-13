@@ -10,13 +10,13 @@ export interface Product {
 
 export default function ProductCard({ product }: { product: Product }) {
   return (
-    <div className="border rounded-lg p-4 text-center flex flex-col gap-2">
+    <div className="flex flex-col gap-3 rounded-lg border p-6 text-center">
       <img
         src={product.img}
         alt={product.name}
-        className="h-40 w-full object-cover rounded"
+        className="h-48 w-full rounded object-cover"
       />
-      <h3 className="font-semibold">{product.name}</h3>
+      <h3 className="text-lg font-medium">{product.name}</h3>
       <p className="text-sm text-muted-foreground">{product.price}</p>
       <Button variant="secondary" className="mt-auto">
         Add to Cart
