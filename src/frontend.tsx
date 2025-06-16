@@ -9,12 +9,14 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { App } from "./App";
 import { AuthProvider } from "@/context/AuthContext";
+import { Toaster } from "sonner";
 
 const elem = document.getElementById("root")!;
 const app = (
   <StrictMode>
     <AuthProvider>
       <App />
+      <Toaster richColors />
     </AuthProvider>
   </StrictMode>
 );

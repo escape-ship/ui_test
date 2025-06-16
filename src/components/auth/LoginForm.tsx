@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useNavigate, Link } from "react-router-dom"
 import { useAuth } from "@/context/AuthContext"
+import { toast } from "sonner"
 
 export function LoginForm({
   className,
@@ -26,10 +27,11 @@ export function LoginForm({
     const password = String(formData.get("password"))
     try {
       await login(email, password)
+      toast.success("Logged in")
       navigate("/profile")
     } catch (err) {
       console.error(err)
-      alert("Login failed")
+      toast.error("Login failed")
     }
   }
 
