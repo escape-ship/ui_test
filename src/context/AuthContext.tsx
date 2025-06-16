@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState, ReactNode } from "react
 
 type AuthContextValue = {
   isLoggedIn: boolean;
-  login: () => void;
+  login: (email: string, password: string) => Promise<void>;
   logout: () => void;
 };
 
@@ -17,7 +17,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.setItem("loggedIn", String(isLoggedIn));
   }, [isLoggedIn]);
 
-  const login = () => setIsLoggedIn(true);
+  async function login(email: string, password: string) {
+    await fetch("http://0.0.0.0:8081/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+    setIsLoggedIn(true);
+  }
   const logout = () => setIsLoggedIn(false);
 
   return (

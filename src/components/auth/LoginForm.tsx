@@ -19,10 +19,18 @@ export function LoginForm({
   const { login } = useAuth()
   const navigate = useNavigate()
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    login()
-    navigate("/profile")
+    const formData = new FormData(e.currentTarget)
+    const email = String(formData.get("email"))
+    const password = String(formData.get("password"))
+    try {
+      await login(email, password)
+      navigate("/profile")
+    } catch (err) {
+      console.error(err)
+      alert("Login failed")
+    }
   }
 
   return (
@@ -41,6 +49,7 @@ export function LoginForm({
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
+                  name="email"
                   type="email"
                   placeholder="m@example.com"
                   required
@@ -56,7 +65,7 @@ export function LoginForm({
                     Forgot your password?
                   </a>
                 </div>
-                <Input id="password" type="password" required />
+                <Input id="password" name="password" type="password" required />
               </div>
               <div className="flex flex-col gap-3">
                 <Button type="submit" className="w-full">
