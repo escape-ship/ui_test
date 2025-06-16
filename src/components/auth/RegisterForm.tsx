@@ -32,7 +32,7 @@ export default function RegisterForm() {
   const navigate = useNavigate();
 
   async function onSubmit(values: FormValues) {
-    await fetch("http://0.0.0.0:8081/register", {
+    await fetch("http://localhost:8081/oauth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email: values.email, password: values.password }),

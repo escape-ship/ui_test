@@ -18,7 +18,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [isLoggedIn]);
 
   async function login(email: string, password: string) {
-    await fetch("http://0.0.0.0:8081/login", {
+    const res = await fetch("http://localhost:8081/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
