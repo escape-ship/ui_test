@@ -11,6 +11,7 @@ import FAQPage from "@/pages/faq";
 import ContactPage from "@/pages/contact";
 import LoginPage from "@/pages/login";
 import RegisterPage from "@/pages/register";
+import ProfilePage from "@/pages/profile";
 import "./index.css";
 
 export function App() {
@@ -29,6 +30,7 @@ export function App() {
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
         </Routes>
       </PageWrapper>
     </BrowserRouter>
