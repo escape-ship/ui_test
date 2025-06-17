@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
 import { Menu, Search, ShoppingCart } from "lucide-react";
 import {
   NavigationMenu,
@@ -9,6 +10,7 @@ import {
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 
 export default function NavBar() {
+  const { isLoggedIn } = useAuth();
   const links = (
     <>
       <NavigationMenuItem>
@@ -61,6 +63,12 @@ export default function NavBar() {
           </button>
           <Link to="/cart" aria-label="Cart">
             <ShoppingCart className="size-5" />
+          </Link>
+          <Link
+            to={isLoggedIn ? "/profile" : "/login"}
+            className="text-sm"
+          >
+            {isLoggedIn ? "My Account" : "Login"}
           </Link>
           <Drawer direction="left">
             <DrawerTrigger className="md:hidden p-2" aria-label="Menu">
