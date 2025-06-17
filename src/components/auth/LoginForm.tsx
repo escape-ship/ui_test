@@ -13,6 +13,7 @@ import { useNavigate, Link } from "react-router-dom"
 import { useAuth } from "@/context/AuthContext"
 import { Alert } from "@/components/ui/alert"
 import { useState } from "react"
+import { KAKAO_CLIENT_ID, KAKAO_REDIRECT_URI } from "@/lib/config"
 
 export function LoginForm({
   className,
@@ -23,7 +24,8 @@ export function LoginForm({
   const [error, setError] = useState<string | null>(null)
 
   function handleKakaoLogin() {
-    const authURL = "http://localhost/oauth/kakao/login"
+    const authURL =
+      `https://kauth.kakao.com/oauth/authorize?client_id=${KAKAO_CLIENT_ID}&redirect_uri=${KAKAO_REDIRECT_URI}&response_type=code`
     window.open(authURL, "_blank", "width=500,height=600")
   }
 
