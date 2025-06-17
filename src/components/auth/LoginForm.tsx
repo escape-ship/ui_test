@@ -96,8 +96,11 @@ export function LoginForm({
                 <Button type="submit" className="w-full">
                   Login
                 </Button>
-                <Button variant="outline" className="w-full">
-                  Login with Google
+                <Button
+                  asChild
+                  className="w-full bg-[#FEE500] hover:bg-[#FEE500]/90 text-black"
+                >
+                  <a href="http://localhost/oauth/kakao/login">Login with Kakao</a>
                 </Button>
               </div>
             </div>
