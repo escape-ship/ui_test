@@ -1,9 +1,18 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
 
 const schema = z
   .object({
@@ -21,10 +30,17 @@ type FormValues = z.infer<typeof schema>;
 
 export default function RegisterForm() {
   const form = useForm<FormValues>({ resolver: zodResolver(schema) });
+  const navigate = useNavigate();
+  const { register: registerUser } = useAuth();
+
+  async function onSubmit(values: FormValues) {
+    await registerUser(values.email, values.password);
+    navigate("/login");
+  }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(v => console.log(v))} className="space-y-4 max-w-sm mx-auto">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 max-w-sm mx-auto">
         <FormField
           control={form.control}
           name="name"

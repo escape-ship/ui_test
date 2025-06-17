@@ -12,6 +12,13 @@ To start a development server:
 bun dev
 ```
 
+To test authentication without a backend server, run the app with the
+`BUN_PUBLIC_MOCK_AUTH` environment variable set to `true`:
+
+```bash
+BUN_PUBLIC_MOCK_AUTH=true bun dev
+```
+
 To run for production:
 
 ```bash
