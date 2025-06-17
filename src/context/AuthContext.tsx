@@ -18,19 +18,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [isLoggedIn]);
 
   async function login(email: string, password: string) {
+    const res = await fetch("http://localhost:8081/oauth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
     if (res.ok) {
       setIsLoggedIn(true);
       return;
+    }
     if (res.status === 401) {
       throw new Error("password");
     }
     throw new Error("server");
-      body: JSON.stringify({ email, password }),
-    });
-    if (!res.ok) {
-      throw new Error("Invalid credentials");
-    }
-    setIsLoggedIn(true);
   }
   const logout = () => setIsLoggedIn(false);
 
