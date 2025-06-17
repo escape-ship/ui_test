@@ -11,7 +11,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useNavigate, Link } from "react-router-dom"
 import { useAuth } from "@/context/AuthContext"
-import { toast } from "sonner"
+import { Alert } from "@/components/ui/alert"
+import { useState } from "react"
 
 export function LoginForm({
   className,
@@ -19,6 +20,7 @@ export function LoginForm({
 }: React.ComponentProps<"div">) {
   const { login } = useAuth()
   const navigate = useNavigate()
+  const [error, setError] = useState<string | null>(null)
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -27,11 +29,13 @@ export function LoginForm({
     const password = String(formData.get("password"))
     try {
       await login(email, password)
-      toast.success("Logged in")
-      navigate("/profile")
+      navigate("/")
     } catch (err) {
-      console.error(err)
-      toast.error("Login failed")
+      if (err instanceof Error && err.message === "password") {
+        setError("비밀번호가 올바르지 않습니다.")
+      } else {
+        setError("서버 오류가 발생했습니다.")
+      }
     }
   }
 
@@ -45,6 +49,7 @@ export function LoginForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
+          {error && <Alert variant="error" className="mb-4">{error}</Alert>}
           <form onSubmit={handleSubmit}>
             <div className="flex flex-col gap-6">
               <div className="grid gap-3">

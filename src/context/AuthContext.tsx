@@ -18,9 +18,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [isLoggedIn]);
 
   async function login(email: string, password: string) {
-    const res = await fetch("http://0.0.0.0:8081/oauth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+    if (res.ok) {
+      setIsLoggedIn(true);
+      return;
+    if (res.status === 401) {
+      throw new Error("password");
+    }
+    throw new Error("server");
       body: JSON.stringify({ email, password }),
     });
     if (!res.ok) {
