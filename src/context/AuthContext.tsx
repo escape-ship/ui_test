@@ -4,6 +4,7 @@ type AuthContextValue = {
   isLoggedIn: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
+  socialLogin: () => void;
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -34,8 +35,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
   const logout = () => setIsLoggedIn(false);
 
+  function socialLogin() {
+    setIsLoggedIn(true);
+  }
+
   return (
-    <AuthContext.Provider value={{ isLoggedIn, login, logout }}>
+    <AuthContext.Provider value={{ isLoggedIn, login, logout, socialLogin }}>
       {children}
     </AuthContext.Provider>
   );

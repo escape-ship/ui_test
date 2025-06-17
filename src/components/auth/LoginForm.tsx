@@ -22,6 +22,11 @@ export function LoginForm({
   const navigate = useNavigate()
   const [error, setError] = useState<string | null>(null)
 
+  function handleKakaoLogin() {
+    const authURL = "http://localhost/oauth/kakao/login"
+    window.open(authURL, "_blank", "width=500,height=600")
+  }
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     const formData = new FormData(e.currentTarget)
@@ -96,8 +101,12 @@ export function LoginForm({
                 <Button type="submit" className="w-full">
                   Login
                 </Button>
-                <Button variant="outline" className="w-full">
-                  Login with Google
+                <Button
+                  type="button"
+                  onClick={handleKakaoLogin}
+                  className="w-full bg-[#FEE500] hover:bg-[#FEE500]/90 text-black"
+                >
+                  Login With Kakao
                 </Button>
               </div>
             </div>
