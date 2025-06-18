@@ -12,7 +12,12 @@ export default function KakaoCallbackPage() {
 
     async function handleAuth() {
       if (!code) {
-        navigate("/login");
+        if (window.opener) {
+          window.opener.postMessage(
+            { type: "KAKAO_LOGIN_RESULT", success: false },
+            "*"
+          );
+        }
         return;
       }
       try {
@@ -23,21 +28,42 @@ export default function KakaoCallbackPage() {
         });
         if (res.ok) {
           const data = await res.json();
-          localStorage.setItem("accessToken", data.accessToken);
-          localStorage.setItem("refreshToken", data.refreshToken);
-          localStorage.setItem(
-            "userInfoJson",
-            JSON.stringify(data.userInfoJson)
-          );
-          socialLogin();
-          navigate("/");
+          // accessToken 등 필수 값이 없으면 실패로 간주
+          if (data.accessToken && data.refreshToken && data.userInfoJson && window.opener) {
+            window.opener.postMessage(
+              {
+                type: "KAKAO_LOGIN_RESULT",
+                success: true,
+                tokens: {
+                  accessToken: data.accessToken,
+                  refreshToken: data.refreshToken,
+                  userInfoJson: data.userInfoJson,
+                },
+              },
+              "*"
+            );
+            window.close();
+          } else if (window.opener) {
+            window.opener.postMessage(
+              { type: "KAKAO_LOGIN_RESULT", success: false },
+              "*"
+            );
+          }
         } else {
-          alert("Kakao login failed");
-          navigate("/login");
+          if (window.opener) {
+            window.opener.postMessage(
+              { type: "KAKAO_LOGIN_RESULT", success: false },
+              "*"
+            );
+          }
         }
       } catch {
-        alert("Kakao login failed");
-        navigate("/login");
+        if (window.opener) {
+          window.opener.postMessage(
+            { type: "KAKAO_LOGIN_RESULT", success: false },
+            "*"
+          );
+        }
       }
     }
 

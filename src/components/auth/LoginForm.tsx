@@ -12,20 +12,21 @@ import { Label } from "@/components/ui/label"
 import { useNavigate, Link } from "react-router-dom"
 import { useAuth } from "@/context/AuthContext"
 import { Alert } from "@/components/ui/alert"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { KAKAO_CLIENT_ID, KAKAO_REDIRECT_URI } from "@/lib/config"
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const { login } = useAuth()
+  const { login, socialLogin } = useAuth()
   const navigate = useNavigate()
   const [error, setError] = useState<string | null>(null)
 
   function handleKakaoLogin() {
     const authURL =
       `https://kauth.kakao.com/oauth/authorize?client_id=${KAKAO_CLIENT_ID}&redirect_uri=${KAKAO_REDIRECT_URI}&response_type=code`
+    console.log("url:", authURL)
     window.open(authURL, "_blank", "width=500,height=600")
   }
 
@@ -45,6 +46,26 @@ export function LoginForm({
       }
     }
   }
+
+  useEffect(() => {
+    function handleKakaoMessage(event: MessageEvent) {
+      if (event.data?.type === "KAKAO_LOGIN_RESULT") {
+        if (event.data.success && event.data.tokens) {
+          localStorage.setItem("accessToken", event.data.tokens.accessToken)
+          localStorage.setItem("refreshToken", event.data.tokens.refreshToken)
+          localStorage.setItem("userInfoJson", JSON.stringify(event.data.tokens.userInfoJson))
+          // 이미 최상위에서 받아온 socialLogin 사용
+          socialLogin()
+          window.location.href = "/"
+          window.close()
+        } else {
+          setError("카카오 로그인에 실패했습니다.")
+        }
+      }
+    }
+    window.addEventListener("message", handleKakaoMessage)
+    return () => window.removeEventListener("message", handleKakaoMessage)
+  }, [socialLogin])
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
