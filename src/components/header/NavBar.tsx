@@ -8,6 +8,7 @@ import {
   NavigationMenuList,
 } from "@/components/ui/navigation-menu";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
+import logo from "@/assets/logo.png";
 
 export default function NavBar() {
   const { isLoggedIn } = useAuth();
@@ -49,9 +50,12 @@ export default function NavBar() {
   return (
     <header className="border-b bg-background/80 backdrop-blur-md sticky top-0 z-40">
       <div className="container mx-auto flex items-center justify-between py-4 px-6">
-        <Link to="/" className="text-xl font-bold">
-          Gold Shop
-        </Link>
+        <div className="flex items-center gap-2">
+        <img src={logo} alt="로고" className="h-24 w-24" />
+          {/* <Link to="/" className="text-xl font-bold">
+            attirance
+          </Link> */}
+        </div>
         <nav className="hidden md:block">
           <NavigationMenu>
             <NavigationMenuList className="flex gap-6">{links}</NavigationMenuList>
