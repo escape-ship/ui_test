@@ -227,7 +227,7 @@
     <div class="popup-content">
       <h3>상품 추가</h3>
       <input type="text" id="name" placeholder="상품명" />
-      <input type="text" id="categories" placeholder="카테고리" />
+      <input type="text" id="categories" placeholder="카테고리 (쉼표로 구분)" />
       <input type="number" id="price" placeholder="가격" />
       <input type="number" id="inventory" placeholder="재고" />
       <input type="text" id="image_url" placeholder="이미지 URL" />
@@ -275,18 +275,19 @@
     // 상품 추가하기
     function submitProduct() {
       const name = document.getElementById("name").value;
-      const categories = document.getElementById("categories").value;
+      const categoriesInput = document.getElementById("categories").value;
       const price = parseFloat(document.getElementById("price").value);
       const inventory = parseInt(document.getElementById("inventory").value);
       const image_url = document.getElementById("image_url").value;
 
-      // 데이터 유효성 검사
-      if (!name || !categories || isNaN(price) || isNaN(inventory) || !image_url) {
+      // 쉼표로 구분된 카테고리 입력값을 배열로 변환
+      const categories = categoriesInput.split(',').map(c => c.trim()).filter(c => c);
+
+      if (!name || !categories.length || isNaN(price) || isNaN(inventory) || !image_url) {
         alert("모든 필드를 올바르게 입력하세요.");
         return;
       }
 
-      // API 요청
       fetch("http://localhost:8081/products", {
         method: "POST",
         headers: {
@@ -295,7 +296,7 @@
         },
         body: JSON.stringify({
           name: name,
-          categories: categories,
+          categories: categories, // 배열로 전송
           price: price,
           inventory: inventory,
           image_url: image_url
@@ -305,7 +306,6 @@
         .then(data => {
           alert(data.message);
           closePopup();
-          // 상품 리스트 갱신 (옵션)
           loadProducts();
         })
         .catch(err => {
