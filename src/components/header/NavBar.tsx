@@ -51,7 +51,9 @@ export default function NavBar() {
     <header className="border-b bg-background/80 backdrop-blur-md sticky top-0 z-40">
       <div className="container mx-auto flex items-center justify-between py-4 px-6">
         <div className="flex items-center gap-2">
-        <img src={logo} alt="로고" className="h-24 w-24" />
+          <div className="overflow-hidden" style={{ width: '140px', height: '56px', borderRadius: '16px' }}>
+            <img src={logo} alt="로고" className="w-full h-full object-cover" />
+          </div>
           {/* <Link to="/" className="text-xl font-bold">
             attirance
           </Link> */}
