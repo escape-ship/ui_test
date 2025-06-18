@@ -12,6 +12,7 @@ import ContactPage from "@/pages/contact";
 import LoginPage from "@/pages/login";
 import RegisterPage from "@/pages/register";
 import ProfilePage from "@/pages/profile";
+import KakaoCallbackPage from "@/pages/kakao-callback";
 import "./index.css";
 
 export function App() {
@@ -31,6 +32,7 @@ export function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/callback" element={<KakaoCallbackPage />} />
         </Routes>
       </PageWrapper>
     </BrowserRouter>
