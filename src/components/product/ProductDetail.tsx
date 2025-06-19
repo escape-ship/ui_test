@@ -3,55 +3,91 @@ import { useParams } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-const goldOptions = ["14k", "18k", "24k"];
-const colorOptions: Record<string, string[]> = {
-  "14k": ["화이트", "리얼화이트", "옐로우", "리얼옐로우", "핑크"],
-  "18k": ["화이트", "리얼화이트", "옐로우", "리얼옐로우", "핑크"],
-  "24k": ["옐로우"],
+type OptionValue = {
+  valueId: number;
+  value: string;
 };
-const sizeOptions = ["10호", "11호", "12호", "13호", "14호"];
+
+type ProductOption = {
+  optionId: number;
+  optionName: string;
+  values: OptionValue[];
+};
+
+type Product = {
+  id: string;
+  name: string;
+  price: number;
+  imageUrl?: string;
+  categories?: { id: number; name: string }[];
+};
 
 export default function ProductDetail() {
-  const { id } = useParams();
-  const [product, setProduct] = useState<any>(null);
+  const { id } = useParams<{ id: string }>();
+  const [product, setProduct] = useState<Product | null>(null);
+  const [options, setOptions] = useState<ProductOption[]>([]);
+  const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
   const [selectedImage, setSelectedImage] = useState("");
   const [quantity, setQuantity] = useState(1);
 
-  // 옵션 상태
-  const [selectedGold, setSelectedGold] = useState("");
-  const [selectedColor, setSelectedColor] = useState("");
-  const [selectedSize, setSelectedSize] = useState("");
-
   useEffect(() => {
     if (!id) return;
+
+    // 1) 상품 상세 정보 불러오기
     fetch(`http://localhost:8081/products/${id}`)
       .then(res => res.json())
       .then(data => {
         setProduct(data.product);
         setSelectedImage(data.product.imageUrl || "https://via.placeholder.com/400");
       })
-      .catch(err => console.error(err));
+      .catch(console.error);
+
+    // 2) 옵션 데이터 불러오기 (gRPC REST API)
+    fetch(`http://localhost:8081/product/${id}/options`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
+    })
+      .then(res => res.json())
+      .then(data => {
+        setOptions(data.options || []);
+      })
+      .catch(console.error);
   }, [id]);
 
+  // 옵션 선택 변경 핸들러
+  const handleOptionChange = (optionName: string, value: string) => {
+    setSelectedOptions(prev => ({
+      ...prev,
+      [optionName]: value,
+    }));
+  };
+
+  // 장바구니 담기
   const handleAddToCart = () => {
-    if (!product || !selectedGold || !selectedColor || !selectedSize) {
-      alert("옵션을 모두 선택해주세요.");
-      return;
+    if (!product) return;
+
+    // 모든 옵션이 선택됐는지 체크
+    for (const opt of options) {
+      if (!selectedOptions[opt.optionName]) {
+        alert(`${opt.optionName} 옵션을 선택해주세요.`);
+        return;
+      }
     }
 
+    const cartItemId = `${product.id}-${Object.values(selectedOptions).join("-")}`;
+
     const cartItem = {
-      id: `${product.id}-${selectedGold}-${selectedColor}-${selectedSize}`,
+      id: cartItemId,
       name: product.name,
       imageUrl: product.imageUrl,
       price: product.price,
-      quantity: quantity,
-      gold: selectedGold,
-      color: selectedColor,
-      size: selectedSize,
+      quantity,
+      options: { ...selectedOptions },
     };
 
     const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
-    const existingIndex = existingCart.findIndex((item: any) => item.id === cartItem.id);
+    const existingIndex = existingCart.findIndex((item: any) => item.id === cartItemId);
 
     if (existingIndex !== -1) {
       existingCart[existingIndex].quantity += quantity;
@@ -63,7 +99,7 @@ export default function ProductDetail() {
     alert("장바구니에 담았습니다!");
   };
 
-  if (!product) return <div>Loading...</div>;
+  if (!product) return <div>Loading product...</div>;
 
   const images = [
     product.imageUrl || "https://via.placeholder.com/400",
@@ -99,76 +135,31 @@ export default function ProductDetail() {
           </p>
         )}
 
-        <p className="text-xl">{parseInt(product.price, 10).toLocaleString()}원</p>
+        <p className="text-xl">{product.price.toLocaleString()}원</p>
 
-        <p className="text-muted-foreground">A beautiful piece crafted from the finest gold.</p>
+        <p className="text-muted-foreground">A beautiful piece crafted from the finest materials.</p>
 
-        {/* 금 종류 선택 */}
-        <div>
-          <label className="font-semibold">옵션 선택 (금 종류)</label>
-          <select
-            value={selectedGold}
-            onChange={e => {
-              setSelectedGold(e.target.value);
-              setSelectedColor("");
-              setSelectedSize("");
-            }}
-            className="w-full border rounded-md p-2 mt-1"
-          >
-            <option value="">선택하세요</option>
-            {goldOptions.map(opt => (
-              <option key={opt} value={opt}>
-                {opt}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* 색상 선택 */}
-        {selectedGold && (
-          <div>
-            <label className="font-semibold">색상 선택</label>
-            <div className="flex gap-2 mt-1 flex-wrap">
-              {colorOptions[selectedGold].map(color => (
-                <button
-                  key={color}
-                  onClick={() => {
-                    setSelectedColor(color);
-                    setSelectedSize("");
-                  }}
-                  className={`px-3 py-1 rounded-full border ${
-                    selectedColor === color ? "bg-black text-white" : "bg-gray-100"
-                  }`}
-                >
-                  {color}
-                </button>
+        {/* 동적으로 옵션 렌더링 */}
+        {options.map(opt => (
+          <div key={opt.optionId}>
+            <label className="font-semibold">{opt.optionName} 선택</label>
+            <select
+              value={selectedOptions[opt.optionName] || ""}
+              onChange={e => handleOptionChange(opt.optionName, e.target.value)}
+              className="w-full border rounded-md p-2 mt-1"
+            >
+              <option value="">선택하세요</option>
+              {opt.values.map(v => (
+                <option key={v.valueId} value={v.value}>
+                  {v.value}
+                </option>
               ))}
-            </div>
+            </select>
           </div>
-        )}
-
-        {/* 사이즈 선택 */}
-        {selectedColor && (
-          <div>
-            <label className="font-semibold">사이즈 선택</label>
-            <div className="flex gap-2 mt-1 flex-wrap">
-              {sizeOptions.map(size => (
-                <button
-                  key={size}
-                  onClick={() => setSelectedSize(size)}
-                  className={`px-3 py-1 rounded-md border ${
-                    selectedSize === size ? "bg-black text-white" : "bg-gray-100"
-                  }`}
-                >
-                  {size}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
+        ))}
 
         {/* 수량 및 장바구니 버튼 */}
-        {selectedSize && (
+        {options.length > 0 && (
           <div className="flex items-end gap-2 mt-4">
             <Input
               type="number"
