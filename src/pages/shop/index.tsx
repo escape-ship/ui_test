@@ -6,7 +6,7 @@ export default function ShopPage() {
   const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
-    fetch("http://localhost:8081/products")
+    fetch("http://localhost:8080/products")
       .then((res) => res.json())
       .then((data) => {
         // imageUrl -> image_url로 변환

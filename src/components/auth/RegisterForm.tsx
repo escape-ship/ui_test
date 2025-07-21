@@ -42,7 +42,7 @@ export default function RegisterForm({
   async function onSubmit(values: FormValues) {
     setError(null);
     try {
-      const res = await fetch("http://localhost:8081/oauth/register", {
+      const res = await fetch("http://localhost:8080/oauth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: values.email, password: values.password }),

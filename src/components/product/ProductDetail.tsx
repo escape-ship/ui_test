@@ -34,7 +34,7 @@ export default function ProductDetail() {
     if (!id) return;
 
     // 1) 상품 상세 정보 불러오기
-    fetch(`http://localhost:8081/products/${id}`)
+    fetch(`http://localhost:8080/products/${id}`)
       .then(res => res.json())
       .then(data => {
         setProduct(data.product);
@@ -43,7 +43,7 @@ export default function ProductDetail() {
       .catch(console.error);
 
     // 2) 옵션 데이터 불러오기 (gRPC REST API)
-    fetch(`http://localhost:8081/product/${id}/options`, {
+    fetch(`http://localhost:8080/product/${id}/options`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id }),

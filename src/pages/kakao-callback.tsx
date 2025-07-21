@@ -21,7 +21,7 @@ export default function KakaoCallbackPage() {
         return;
       }
       try {
-        const res = await fetch("http://localhost:8081/oauth/kakao/callback", {
+        const res = await fetch("http://localhost:8080/oauth/kakao/callback", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ code, scope: "account_email profile_image" }),
