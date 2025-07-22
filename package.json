@@ -7,6 +7,8 @@
   "module": "src/index.tsx",
   "scripts": {
     "dev": "bun --hot src/index.tsx",
+    "dev:3001": "bun --hot src/index.tsx 3001",
+    "dev:8080": "bun --hot src/index.tsx 8080",
     "start": "NODE_ENV=production bun src/index.tsx",
     "build": "bun run build.ts"
   },

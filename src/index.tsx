@@ -1,9 +1,12 @@
 import { serve } from "bun";
 import index from "../dist/index.html";
 
+const port = process.env.PORT || Bun.argv[2] || 3000;
+const hostname = process.env.HOSTNAME || (process.env.NODE_ENV === "production" ? "0.0.0.0" : "localhost");
+
 const server = serve({
-  port: 3000,
-  hostname: "0.0.0.0", // Essential: Bind to all interfaces for Docker
+  port: Number(port),
+  hostname, // localhost for local dev, 0.0.0.0 for production/Docker
   routes: {
     // Serve index.html for all unmatched routes.
     "/*": index,
