@@ -1,7 +1,9 @@
 import { serve } from "bun";
-import index from "./index.html";
+import index from "../dist/index.html";
 
 const server = serve({
+  port: 3000,
+  hostname: "0.0.0.0", // Essential: Bind to all interfaces for Docker
   routes: {
     // Serve index.html for all unmatched routes.
     "/*": index,

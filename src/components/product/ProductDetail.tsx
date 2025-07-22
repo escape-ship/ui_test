@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { config } from "@/lib/config";
 
 type OptionValue = {
   valueId: number;
@@ -34,7 +35,7 @@ export default function ProductDetail() {
     if (!id) return;
 
     // 1) 상품 상세 정보 불러오기
-    fetch(`http://localhost:8080/products/${id}`)
+    fetch(`${config.BACKEND_URL}/products/${id}`)
       .then(res => res.json())
       .then(data => {
         setProduct(data.product);
@@ -43,7 +44,7 @@ export default function ProductDetail() {
       .catch(console.error);
 
     // 2) 옵션 데이터 불러오기 (gRPC REST API)
-    fetch(`http://localhost:8080/product/${id}/options`, {
+    fetch(`${config.BACKEND_URL}/product/${id}/options`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id }),

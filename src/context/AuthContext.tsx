@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { config } from "@/lib/config";
 
 type AuthContextValue = {
   isLoggedIn: boolean;
@@ -19,18 +20,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [isLoggedIn]);
 
   async function login(email: string, password: string) {
-    const res = await fetch("http://localhost:8080/oauth/login", {
+    console.log(`🔐 [Auth] Login attempt to: ${config.BACKEND_URL}/oauth/login`);
+    const res = await fetch(`${config.BACKEND_URL}/oauth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
     });
+    console.log(`📡 [Auth] Login response status: ${res.status}`);
     if (res.ok) {
+      console.log(`✅ [Auth] Login successful`);
       setIsLoggedIn(true);
       return;
     }
     if (res.status === 401) {
+      console.log(`❌ [Auth] Invalid credentials`);
       throw new Error("password");
     }
+    console.log(`❌ [Auth] Server error`);
     throw new Error("server");
   }
   const logout = () => setIsLoggedIn(false);
