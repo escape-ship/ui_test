@@ -43,7 +43,7 @@ export default function RegisterForm({
   async function onSubmit(values: FormValues) {
     setError(null);
     try {
-      const res = await fetch(`${config.BACKEND_URL}/oauth/register`, {
+      const res = await fetch(`${config.BACKEND_URL}/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: values.email, password: values.password }),

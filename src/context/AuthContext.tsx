@@ -20,8 +20,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [isLoggedIn]);
 
   async function login(email: string, password: string) {
-    console.log(`🔐 [Auth] Login attempt to: ${config.BACKEND_URL}/oauth/login`);
-    const res = await fetch(`${config.BACKEND_URL}/oauth/login`, {
+    console.log(`🔐 [Auth] Login attempt to: ${config.BACKEND_URL}/login`);
+    const res = await fetch(`${config.BACKEND_URL}/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
