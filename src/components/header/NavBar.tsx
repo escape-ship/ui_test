@@ -8,7 +8,7 @@ import {
   NavigationMenuList,
 } from "@/components/ui/navigation-menu";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
-import logo from "@/assets/logo.png";
+// logo 이미지를 public 폴더에서 직접 경로로 사용
 
 export default function NavBar() {
   const { isLoggedIn } = useAuth();
@@ -52,7 +52,7 @@ export default function NavBar() {
       <div className="container mx-auto flex items-center justify-between py-4 px-6">
         <div className="flex items-center gap-2">
           <div className="overflow-hidden" style={{ width: '140px', height: '56px', borderRadius: '16px' }}>
-            <img src={logo} alt="로고" className="w-full h-full object-cover" />
+            <img src="/logo.png" alt="로고" className="w-full h-full object-cover" />
           </div>
           {/* <Link to="/" className="text-xl font-bold">
             attirance

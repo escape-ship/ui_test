@@ -51,22 +51,32 @@ export default function ProductDetail() {
     fetch(`${config.BACKEND_URL}/products/${id}`)
       .then(res => res.json())
       .then(data => {
+        console.log(`✅ [ProductDetail] Full API response:`, data);
+        
         setProduct(data.product);
-        setSelectedImage(data.product.image_url || data.product.imageUrl || "https://via.placeholder.com/400");
-        // optionsJson이 있으면 파싱해서 옵션으로 사용
+        setSelectedImage(data.product.imageUrl || data.product.image_url || "https://via.placeholder.com/400");
+        
+        // optionsJson 파싱 - 백엔드 응답에 맞게 수정
         let parsedOptions: any = {};
-        const optionsJson = data.product.optionsJson || data.product.options_json;
+        const optionsJson = data.product.optionsJson;
+        
+        console.log(`🔍 [ProductDetail] Raw optionsJson:`, optionsJson);
+        
         if (optionsJson) {
           try {
             parsedOptions = JSON.parse(optionsJson);
+            console.log(`✅ [ProductDetail] Parsed options:`, parsedOptions);
           } catch (e) {
-            console.error("옵션 JSON 파싱 오류", e);
+            console.error("❌ [ProductDetail] 옵션 JSON 파싱 오류", e);
             parsedOptions = {};
           }
         }
+        
         setOptions(parsedOptions);
       })
-      .catch(console.error);
+      .catch(error => {
+        console.error(`❌ [ProductDetail] API fetch error:`, error);
+      });
   }, [id, token, isLoggedIn, user, navigate]);
 
   // 옵션 선택 변경 핸들러
@@ -79,6 +89,11 @@ export default function ProductDetail() {
 
   // 장바구니 담기
   const handleAddToCart = () => {
+    console.log(`🛒 [ProductDetail] Add to cart clicked`);
+    console.log(`🛒 [ProductDetail] Product:`, product);
+    console.log(`🛒 [ProductDetail] Options:`, options);
+    console.log(`🛒 [ProductDetail] Selected options:`, selectedOptions);
+    
     if (!product) return;
 
     // 로그인 체크
@@ -88,11 +103,13 @@ export default function ProductDetail() {
       return;
     }
 
-    // 모든 옵션이 선택됐는지 체크
-    for (const key of Object.keys(options)) {
-      if (!selectedOptions[key]) {
-        alert(`${options[key].label || key} 옵션을 선택해주세요.`);
-        return;
+    // 모든 옵션이 선택됐는지 체크 (옵션이 있는 경우에만)
+    if (Object.keys(options).length > 0) {
+      for (const key of Object.keys(options)) {
+        if (!selectedOptions[key]) {
+          alert(`${options[key].label || key} 옵션을 선택해주세요.`);
+          return;
+        }
       }
     }
 
@@ -107,6 +124,8 @@ export default function ProductDetail() {
       options: { ...selectedOptions },
     };
 
+    console.log(`🛒 [ProductDetail] Cart item:`, cartItem);
+
     // 사용자별 장바구니 키 생성
     const userCartKey = `cart_${user.id}`;
     const existingCart = JSON.parse(localStorage.getItem(userCartKey) || "[]");
@@ -119,6 +138,7 @@ export default function ProductDetail() {
     }
 
     localStorage.setItem(userCartKey, JSON.stringify(existingCart));
+    console.log(`✅ [ProductDetail] Cart updated:`, existingCart);
     alert("장바구니에 담았습니다!");
   };
 
@@ -164,7 +184,8 @@ export default function ProductDetail() {
 
         {/* 동적으로 옵션 렌더링 */}
         {Object.entries(options).map(([key, opt]: [string, any]) => {
-          // metal 옵션은 객체 배열, size는 문자열 배열, color는 의존성 있음
+          console.log(`🔍 [ProductDetail] Rendering option:`, key, opt);
+          
           if (key === "metal") {
             return (
               <div key={key}>
@@ -175,7 +196,7 @@ export default function ProductDetail() {
                   className="w-full border rounded-md p-2 mt-1"
                 >
                   <option value="">선택하세요</option>
-                  {opt.values.map((v: any) => (
+                  {opt.values && opt.values.map((v: any) => (
                     <option key={v.name} value={v.name}>
                       {v.name} {v.extra_price ? `(+${v.extra_price.toLocaleString()}원)` : ""}
                     </option>
@@ -184,6 +205,7 @@ export default function ProductDetail() {
               </div>
             );
           }
+          
           if (key === "size") {
             return (
               <div key={key}>
@@ -194,17 +216,19 @@ export default function ProductDetail() {
                   className="w-full border rounded-md p-2 mt-1"
                 >
                   <option value="">선택하세요</option>
-                  {opt.values.map((v: string) => (
+                  {opt.values && opt.values.map((v: string) => (
                     <option key={v} value={v}>{v}</option>
                   ))}
                 </select>
               </div>
             );
           }
+          
           if (key === "color" && opt.dependency === "metal") {
             // metal 선택에 따라 색상 옵션 변경
             const selectedMetal = selectedOptions["metal"];
             const colorValues = selectedMetal && opt.values[selectedMetal] ? opt.values[selectedMetal] : [];
+            
             return (
               <div key={key}>
                 <label className="font-semibold">{opt.label} 선택</label>
@@ -215,31 +239,33 @@ export default function ProductDetail() {
                   disabled={!selectedMetal}
                 >
                   <option value="">선택하세요</option>
-                  {colorValues.map((v: string) => (
-                    <option key={v} value={v}>{v}</option>
+                  {colorValues.map((color: string) => (
+                    <option key={color} value={color}>{color}</option>
                   ))}
                 </select>
-                {!selectedMetal && <p className="text-xs text-muted-foreground">먼저 금속 종류를 선택하세요.</p>}
+                {!selectedMetal && (
+                  <p className="text-sm text-muted-foreground mt-1">
+                    먼저 금속 종류를 선택해주세요.
+                  </p>
+                )}
               </div>
             );
           }
-          // 기타 옵션은 기본 렌더링
+          
           return null;
         })}
 
         {/* 수량 및 장바구니 버튼 */}
-        {Object.keys(options).length > 0 && (
-          <div className="flex items-end gap-2 mt-4">
-            <Input
-              type="number"
-              value={quantity}
-              onChange={e => setQuantity(Math.max(1, parseInt(e.target.value)))}
-              min={1}
-              className="w-20"
-            />
-            <Button onClick={handleAddToCart}>Add to Cart</Button>
-          </div>
-        )}
+        <div className="flex items-end gap-2 mt-4">
+          <Input
+            type="number"
+            value={quantity}
+            onChange={e => setQuantity(Math.max(1, parseInt(e.target.value)))}
+            min={1}
+            className="w-20"
+          />
+          <Button onClick={handleAddToCart}>Add to Cart</Button>
+        </div>
       </div>
     </div>
   );

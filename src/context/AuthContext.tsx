@@ -1,8 +1,10 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+import type { ReactNode } from "react";
 import { config } from "@/lib/config";
 
 type User = {
   id: string;
+  user_id?: string;
   email: string;
   name?: string;
   token?: string;
@@ -88,22 +90,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.log(`🔑 [Auth] Token value:`, userToken);
       console.log(`🔑 [Auth] Token length:`, userToken?.length);
       console.log(`🔑 [Auth] Is temp token:`, userToken?.startsWith('temp_token_'));
-      
+
       // 먼저 토큰을 설정
       setToken(userToken);
-      
-      // 그 다음 사용자 정보 설정
+
+      // 그 다음 사용자 정보 설정 (user_id 필드 추가)
       const newUser = {
         id: userData.id || userData.userId || userData.user_id || email,
+        user_id: userData.user_id || userData.id || userData.userId || email,
         email: email,
         name: userData.name || userData.username || "",
         token: userToken
       };
       setUser(newUser);
-      
+
       // 마지막에 로그인 상태 설정
       setIsLoggedIn(true);
-      
+
       console.log(`👤 [Auth] User set:`, newUser);
       console.log(`💾 [Auth] Saving to localStorage - authToken:`, userToken);
       return;

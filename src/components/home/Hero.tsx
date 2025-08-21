@@ -4,11 +4,11 @@ import { Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/autoplay";
 
-import logo1 from "@/assets/banner/banner1.png";
-import logo2 from "@/assets/banner/banner2.jpg";
-import logo3 from "@/assets/banner/banner3.jpg";
-
-const images = [logo1, logo2, logo3];
+const images = [
+  "/banner/banner1.png",
+  "/banner/banner2.jpg",
+  "/banner/banner3.jpg"
+];
 
 export default function Hero() {
   return (
